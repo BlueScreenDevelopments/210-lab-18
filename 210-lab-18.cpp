@@ -1,20 +1,93 @@
-// 210-lab-18.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include <iostream>
+#include <string>
 
-int main()
-{
-    std::cout << "Hello World!\n";
+using namespace std;
+
+struct Node {
+    double rating;
+    string comments;
+    Node* next;
+};
+
+Node* head = nullptr;
+Node* tail = nullptr;
+
+void addNodeToHead(double rating, string comments) {
+    Node* newNode = new Node;
+    newNode->rating = rating;
+    newNode->comments = comments;
+    newNode->next = head;
+    head = newNode;
+    if (tail == nullptr) {
+        tail = newNode;
+    }
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+void addNodeToTail(double rating, string comments) {
+    Node* newNode = new Node;
+    newNode->rating = rating;
+    newNode->comments = comments;
+    newNode->next = nullptr;
+    if (tail == nullptr) {
+        head = newNode;
+        tail = newNode;
+    }
+    else {
+        tail->next = newNode;
+        tail = newNode;
+    }
+}
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+void printReviews() {
+    Node* temp = head;
+    int count = 1;
+    double sum = 0.0;
+    cout << "    ";
+    while (temp != nullptr) {
+        cout << "> Review #" << count << ": " << temp->rating << ": " << temp->comments << endl;
+        sum += temp->rating;
+        temp = temp->next;
+        count++;
+    }
+    if (count > 1) {
+        cout << "    > Average: " << sum / (count - 1) << endl;
+    }
+}
+
+int main() {
+    int choice;
+    cout << "Which linked list method should we use?" << endl;
+    cout << "    [1] New nodes are added at the head of the linked list" << endl;
+    cout << "    [2] New nodes are added at the tail of the linked list" << endl;
+    cout << "Choice: ";
+    cin >> choice;
+
+    bool addMore = true;
+    while (addMore) {
+        double rating;
+        string comments;
+        cout << "Enter review rating 0-5: ";
+        cin >> rating;
+        cout << "Enter review comments: ";
+        cin.ignore();
+        getline(cin, comments);
+        if (choice == 1) {
+            addNodeToHead(rating, comments);
+        }
+        else {
+            addNodeToTail(rating, comments);
+        }
+        char response;
+        cout << "Enter another review? Y/N: ";
+        cin >> response;
+        cout << endl;
+        if (response == 'n' || response == 'N') {
+            addMore = false;
+        }
+    }
+
+    cout << "Outputting all reviews:" << endl;
+    printReviews();
+
+    return 0;
+}
